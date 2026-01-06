@@ -148,3 +148,4 @@ Thumbs.db
 # Project specific
 docker/postgres/data/
 docker/redis/data/
+SaaS-platform-CRM-ERP-/
