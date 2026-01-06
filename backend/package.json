@@ -7,12 +7,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/unified-crm-erp.git",
+    "url": "https://github.com/m1hamuha/SaaS-platform-CRM-ERP-.git",
     "directory": "backend"
   },
-  "homepage": "https://github.com/yourusername/unified-crm-erp#readme",
+  "homepage": "https://github.com/m1hamuha/SaaS-platform-CRM-ERP-#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/unified-crm-erp/issues"
+    "url": "https://github.com/m1hamuha/SaaS-platform-CRM-ERP-/issues"
   },
   "keywords": [
     "nestjs",

@@ -1,6 +1,6 @@
 # Unified CRM/ERP SaaS Platform
 
-[![CI](https://github.com/yourusername/unified-crm-erp/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/unified-crm-erp/actions/workflows/ci.yml)
+[![CI](https://github.com/m1hamuha/SaaS-platform-CRM-ERP-/actions/workflows/ci.yml/badge.svg)](https://github.com/m1hamuha/SaaS-platform-CRM-ERP-/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
@@ -108,8 +108,8 @@ graph TB
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/unified-crm-erp.git
-   cd unified-crm-erp
+   git clone https://github.com/m1hamuha/SaaS-platform-CRM-ERP-.git
+   cd SaaS-platform-CRM-ERP-
    ```
 
 2. **Start infrastructure services**
@@ -285,8 +285,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: Use the [GitHub Issues](https://github.com/yourusername/unified-crm-erp/issues) page
-- **Discussions**: Join the [GitHub Discussions](https://github.com/yourusername/unified-crm-erp/discussions) for questions and ideas
+- **Issues**: Use the [GitHub Issues](https://github.com/m1hamuha/SaaS-platform-CRM-ERP-/issues) page
+- **Discussions**: Join the [GitHub Discussions](https://github.com/m1hamuha/SaaS-platform-CRM-ERP-/discussions) for questions and ideas
 
 ## 🙏 Acknowledgments
 
