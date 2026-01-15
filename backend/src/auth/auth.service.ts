@@ -51,7 +51,6 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       refresh_token: this.jwtService.sign(payload, {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         expiresIn: refreshExpiresIn as any,
       }),
       user: {

@@ -40,7 +40,7 @@ describe('AllExceptionsFilter', () => {
 
   it('should handle HttpException correctly', () => {
     const exception = new HttpException('Test error', HttpStatus.BAD_REQUEST);
-    
+
     filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
@@ -57,13 +57,19 @@ describe('AllExceptionsFilter', () => {
 
   it('should handle validation errors correctly', () => {
     const validationError = {
-      message: ['email must be an email', 'password must be longer than 6 characters'],
+      message: [
+        'email must be an email',
+        'password must be longer than 6 characters',
+      ],
       error: 'Bad Request',
       statusCode: 400,
     };
-    
-    const exception = new HttpException(validationError, HttpStatus.BAD_REQUEST);
-    
+
+    const exception = new HttpException(
+      validationError,
+      HttpStatus.BAD_REQUEST,
+    );
+
     filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
     expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.BAD_REQUEST);
@@ -78,10 +84,12 @@ describe('AllExceptionsFilter', () => {
 
   it('should handle generic Error correctly', () => {
     const exception = new Error('Generic error');
-    
+
     filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
-    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,10 +101,12 @@ describe('AllExceptionsFilter', () => {
 
   it('should handle unknown exception correctly', () => {
     const exception = 'String error';
-    
+
     filter.catch(exception as any, mockArgumentsHost as ArgumentsHost);
 
-    expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
+    expect(mockResponse.status).toHaveBeenCalledWith(
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
     expect(mockResponse.json).toHaveBeenCalledWith(
       expect.objectContaining({
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -110,7 +120,7 @@ describe('AllExceptionsFilter', () => {
     process.env.NODE_ENV = 'development';
     const exception = new Error('Test error');
     exception.stack = 'test stack trace';
-    
+
     filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
     expect(mockResponse.json).toHaveBeenCalledWith(
@@ -127,7 +137,7 @@ describe('AllExceptionsFilter', () => {
     process.env.NODE_ENV = 'production';
     const exception = new Error('Test error');
     exception.stack = 'test stack trace';
-    
+
     filter.catch(exception, mockArgumentsHost as ArgumentsHost);
 
     const responseCall = (mockResponse.json as jest.Mock).mock.calls[0][0];

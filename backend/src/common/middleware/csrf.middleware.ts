@@ -21,10 +21,16 @@ export class CsrfMiddleware implements NestMiddleware {
 
     // Validate CSRF token for state-changing requests
     if (this.isStateChangingMethod(req.method)) {
-      const tokenFromHeader = req.headers[this.CSRF_TOKEN_HEADER.toLowerCase()] as string;
+      const tokenFromHeader = req.headers[
+        this.CSRF_TOKEN_HEADER.toLowerCase()
+      ] as string;
       const tokenFromCookie = req.cookies?.[this.CSRF_TOKEN_COOKIE];
 
-      if (!tokenFromHeader || !tokenFromCookie || tokenFromHeader !== tokenFromCookie) {
+      if (
+        !tokenFromHeader ||
+        !tokenFromCookie ||
+        tokenFromHeader !== tokenFromCookie
+      ) {
         res.status(403).json({
           statusCode: 403,
           message: 'Invalid CSRF token',
@@ -39,7 +45,7 @@ export class CsrfMiddleware implements NestMiddleware {
 
   private shouldSkipCsrf(req: Request): boolean {
     const { method, path } = req;
-    
+
     // Skip for safe methods
     if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
       return true;
@@ -64,7 +70,7 @@ export class CsrfMiddleware implements NestMiddleware {
 
   private generateCsrfToken(res: Response): void {
     const token = crypto.randomBytes(32).toString('hex');
-    
+
     res.cookie(this.CSRF_TOKEN_COOKIE, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -84,7 +90,10 @@ export class CsrfMiddleware implements NestMiddleware {
   /**
    * Validate CSRF token
    */
-  static validateToken(tokenFromHeader: string, tokenFromCookie: string): boolean {
+  static validateToken(
+    tokenFromHeader: string,
+    tokenFromCookie: string,
+  ): boolean {
     return tokenFromHeader === tokenFromCookie;
   }
 }

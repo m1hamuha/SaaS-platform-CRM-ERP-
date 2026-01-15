@@ -32,9 +32,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           duration: 30000, // 30 seconds cache
         },
         // SSL configuration for production
-        ssl: configService.get<string>('app.nodeEnv') === 'production' ? {
-          rejectUnauthorized: false,
-        } : false,
+        ssl:
+          configService.get<string>('app.nodeEnv') === 'production'
+            ? {
+                rejectUnauthorized: false,
+              }
+            : false,
         // Additional connection options
         extra: {
           // Set the tenant ID for each connection (RLS)
@@ -49,7 +52,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         },
         // Migrations configuration
         migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-        migrationsRun: configService.get<string>('app.nodeEnv') === 'production',
+        migrationsRun:
+          configService.get<string>('app.nodeEnv') === 'production',
         migrationsTableName: 'migrations',
         // Retry configuration
         retryAttempts: 3,

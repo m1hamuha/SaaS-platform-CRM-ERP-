@@ -96,21 +96,15 @@ export class MetricsService implements OnModuleInit {
       .labels(method, route, statusCode.toString())
       .observe(duration);
 
-    this.httpRequestTotal
-      .labels(method, route, statusCode.toString())
-      .inc();
+    this.httpRequestTotal.labels(method, route, statusCode.toString()).inc();
 
     if (statusCode >= 400) {
-      this.httpErrorTotal
-        .labels(method, route, statusCode.toString())
-        .inc();
+      this.httpErrorTotal.labels(method, route, statusCode.toString()).inc();
     }
   }
 
   recordDatabaseQuery(operation: string, table: string, duration: number) {
-    this.databaseQueryDuration
-      .labels(operation, table)
-      .observe(duration);
+    this.databaseQueryDuration.labels(operation, table).observe(duration);
   }
 
   async getMetrics(): Promise<string> {

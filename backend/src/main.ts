@@ -64,7 +64,9 @@ async function bootstrap() {
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('Unified CRM/ERP SaaS Platform API')
-      .setDescription('Multi-tenant API with authentication, RBAC, and payment processing')
+      .setDescription(
+        'Multi-tenant API with authentication, RBAC, and payment processing',
+      )
       .setVersion('1.0')
       .addBearerAuth(
         {
@@ -92,11 +94,13 @@ async function bootstrap() {
       },
     });
 
-    logger.log(`Swagger documentation available at: http://localhost:${port}/api/docs`);
+    logger.log(
+      `Swagger documentation available at: http://localhost:${port}/api/docs`,
+    );
   }
 
   await app.listen(port);
-  
+
   logger.log(`Application is running on: http://localhost:${port}/api/v1`);
   logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 }

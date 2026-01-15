@@ -16,7 +16,7 @@ export const throttlerConfig: ThrottlerModuleOptions = {
     // Skip rate limiting for health checks and certain paths
     const request = context.switchToHttp().getRequest();
     const path = request.url;
-    
+
     return (
       path.includes('/health') ||
       path.includes('/api/docs') ||

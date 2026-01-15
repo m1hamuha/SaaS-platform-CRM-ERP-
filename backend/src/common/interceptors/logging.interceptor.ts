@@ -33,10 +33,11 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap({
-        next: (data) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        next: (_data) => {
           const duration = Date.now() - startTime;
           const statusCode = response.statusCode;
-          
+
           // Log successful response
           this.logger.log(
             `Response: ${method} ${url} - Status: ${statusCode} - Duration: ${duration}ms`,
@@ -52,7 +53,7 @@ export class LoggingInterceptor implements NestInterceptor {
         error: (error) => {
           const duration = Date.now() - startTime;
           const statusCode = error.status || 500;
-          
+
           this.logger.error(
             `Error: ${method} ${url} - Status: ${statusCode} - Duration: ${duration}ms - Error: ${error.message}`,
           );

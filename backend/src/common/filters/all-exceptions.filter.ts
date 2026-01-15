@@ -31,14 +31,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const responseObj = exceptionResponse as any;
         message = responseObj.message || exception.message;
         error = responseObj.error || exception.name;
-        
+
         // Extract validation errors if present
         if (Array.isArray(responseObj.message)) {
           validationErrors = responseObj.message;
           message = 'Validation failed';
         }
       } else {
-        message = exceptionResponse as string;
+        message = exceptionResponse;
         error = exception.name;
       }
     } else if (exception instanceof Error) {

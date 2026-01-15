@@ -6,8 +6,10 @@ export default () => ({
     password: process.env.DB_PASSWORD || 'postgres',
     database: process.env.DB_DATABASE || 'crm_erp',
     poolSize: parseInt(process.env.DB_POOL_SIZE || '10', 10) || 10,
-    maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '100', 10) || 100,
-    connectionTimeout: parseInt(process.env.DB_CONNECTION_TIMEOUT || '10000', 10) || 10000,
+    maxConnections:
+      parseInt(process.env.DB_MAX_CONNECTIONS || '100', 10) || 100,
+    connectionTimeout:
+      parseInt(process.env.DB_CONNECTION_TIMEOUT || '10000', 10) || 10000,
     idleTimeout: parseInt(process.env.DB_IDLE_TIMEOUT || '30000', 10) || 30000,
     ssl: process.env.DB_SSL === 'true',
   },
