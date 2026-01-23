@@ -57,6 +57,8 @@
     "@nestjs/swagger": "^11.2.5",
     "@nestjs/terminus": "^11.0.0",
     "@nestjs/throttler": "^6.5.0",
+    "@nestjs/cache-manager": "^2.2.0",
+    "cache-manager-redis-store": "^3.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/csurf": "^1.11.5",
