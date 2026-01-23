@@ -1,4 +1,8 @@
-import { Injectable, NestMiddleware, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { DataSource } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
@@ -20,14 +24,15 @@ export class TenantMiddleware implements NestMiddleware {
           if (decoded && decoded.org_id) {
             organizationId = decoded.org_id;
           }
-        } catch (error) {
+        } catch {
           // Invalid token, continue with header check
         }
       }
 
       // Fallback to X-Organization-ID header (for development/testing)
       if (!organizationId) {
-        const orgHeader = req.headers['x-organization-id'] || req.headers['x-tenant-id'];
+        const orgHeader =
+          req.headers['x-organization-id'] || req.headers['x-tenant-id'];
         if (orgHeader) {
           organizationId = Array.isArray(orgHeader) ? orgHeader[0] : orgHeader;
         }
@@ -39,7 +44,8 @@ export class TenantMiddleware implements NestMiddleware {
       }
 
       // Validate organization ID format (should be UUID)
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(organizationId)) {
         throw new UnauthorizedException('Invalid organization ID format');
       }

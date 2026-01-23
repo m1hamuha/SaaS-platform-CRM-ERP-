@@ -39,18 +39,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           password: configService.get<string>('database.password'),
           database: configService.get<string>('database.database'),
           entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-          synchronize: configService.get<string>('app.nodeEnv') === 'development',
+          synchronize:
+            configService.get<string>('app.nodeEnv') === 'development',
           logging: configService.get<string>('app.nodeEnv') === 'development',
           poolSize: configService.get<number>('database.poolSize', 10),
           maxQueryExecutionTime: 10000,
           extra: {
             max: configService.get<number>('database.poolSize', 10),
-            idleTimeoutMillis: configService.get<number>('database.idleTimeout', 30000),
-            connectionTimeoutMillis: configService.get<number>('database.connectionTimeout', 10000),
+            idleTimeoutMillis: configService.get<number>(
+              'database.idleTimeout',
+              30000,
+            ),
+            connectionTimeoutMillis: configService.get<number>(
+              'database.connectionTimeout',
+              10000,
+            ),
             statement_timeout: 300000,
           },
           migrations: [__dirname + '/../migrations/*{.ts,.js}'],
-          migrationsRun: configService.get<string>('app.nodeEnv') === 'production',
+          migrationsRun:
+            configService.get<string>('app.nodeEnv') === 'production',
           migrationsTableName: 'migrations',
           retryAttempts: 3,
           retryDelay: 3000,

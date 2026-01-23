@@ -34,7 +34,6 @@ describe('Organization Management Acceptance Test', () => {
   let context: TestContext;
   let authToken: string;
   let testOrganizationId: string;
-  let testUserId: string;
 
   beforeAll(async () => {
     // Setup test environment with test data

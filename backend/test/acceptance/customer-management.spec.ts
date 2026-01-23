@@ -6,7 +6,7 @@ import {
   authenticateTestUser,
   getAuthHeaders,
 } from '../smoke/setup';
-import { Customer } from '../../src/customers/customer.entity';
+
 import { Organization } from '../../src/organizations/organization.entity';
 import { User } from '../../src/users/user.entity';
 import supertest from 'supertest';
@@ -37,7 +37,7 @@ describe('Customer Management Acceptance Test', () => {
   let context: TestContext;
   let authToken: string;
   let testOrganizationId: string;
-  let testUserId: string;
+
   let testCustomerId: string;
 
   beforeAll(async () => {
@@ -375,7 +375,7 @@ describe('Customer Management Acceptance Test', () => {
     let lifecycleCustomerId: string;
 
     it('should create customer in initial lead status', async () => {
-      const { app, dataSource } = context;
+      const { app } = context;
 
       const customerData = {
         name: 'Lifecycle Customer',
