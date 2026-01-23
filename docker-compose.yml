@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # --- Infrastructure ---
   postgres:
     image: postgres:16-alpine
     container_name: crm_erp_postgres
@@ -56,6 +57,81 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  # --- Application ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crm_erp_backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=crm_erp
+      - DB_POOL_SIZE=10
+      - DB_MAX_CONNECTIONS=100
+      - DB_CONNECTION_TIMEOUT=10000
+      - DB_IDLE_TIMEOUT=30000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=guest
+      - RABBITMQ_PASSWORD=guest
+      - JWT_SECRET=dev_secret_key_change_in_prod_very_long_and_secure_key_for_development
+      - JWT_EXPIRES_IN=900
+      - JWT_REFRESH_SECRET=dev_refresh_secret_key_change_in_prod_very_long_and_secure_key
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+      - LOG_LEVEL=info
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - crm_erp_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: crm_erp_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      - NEXT_PUBLIC_APP_NAME="Unified CRM/ERP"
+      - NEXT_PUBLIC_APP_VERSION=0.1.0
+      - NEXT_PUBLIC_APP_ENVIRONMENT=development
+      - NEXT_PUBLIC_CACHE_ENABLED=true
+      - NEXT_PUBLIC_CACHE_TTL=3600
+      - NEXT_PUBLIC_SHOW_DEV_TOOLS=true
+    depends_on:
+      - backend
+    networks:
+      - crm_erp_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   crm_erp_network:

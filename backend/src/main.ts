@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -49,6 +50,9 @@ async function bootstrap() {
     }),
   );
 
+  // Global rate limiting
+  app.useGlobalGuards(app.get(ThrottlerGuard));
+
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
@@ -58,7 +62,7 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix('api/v1');
 
-  const port = process.env.PORT ?? 3000;
+  const port = process.env.PORT ?? 3001;
 
   // Swagger configuration
   if (process.env.NODE_ENV !== 'production') {
