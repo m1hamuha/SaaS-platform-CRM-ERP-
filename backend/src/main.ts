@@ -7,10 +7,17 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import helmet from 'helmet';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
+
+  // Raw body parsing for Stripe webhooks
+  app.use(
+    '/api/v1/payments/webhook',
+    express.raw({ type: 'application/json' }),
+  );
 
   // Security middleware
   app.use(helmet());

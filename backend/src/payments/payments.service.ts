@@ -4,18 +4,36 @@ import { Repository } from 'typeorm';
 import { Payment, PaymentStatus } from './payment.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { StripeService } from './stripe.service';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     @InjectRepository(Payment)
     private paymentsRepository: Repository<Payment>,
+    private stripeService: StripeService,
   ) {}
 
   async create(createPaymentDto: CreatePaymentDto): Promise<Payment> {
+    // Create Stripe payment intent
+    const paymentIntent = await this.stripeService.createPaymentIntent(
+      createPaymentDto.amount,
+      'usd', // Default currency, can be made configurable
+      {
+        invoice_id: createPaymentDto.invoice_id,
+        organization_id: createPaymentDto.organization_id,
+      },
+    );
+
     const payment = this.paymentsRepository.create({
       ...createPaymentDto,
+      transaction_id: paymentIntent.id,
       status: PaymentStatus.PENDING,
+      metadata: {
+        ...createPaymentDto.metadata,
+        stripe_payment_intent_id: paymentIntent.id,
+        client_secret: paymentIntent.client_secret,
+      },
     });
 
     return this.paymentsRepository.save(payment);
@@ -68,6 +86,12 @@ export class PaymentsService {
         (payment.notes ? payment.notes + '; ' : '') + `Failed: ${reason}`;
     }
     return this.paymentsRepository.save(payment);
+  }
+
+  async findByTransactionId(transactionId: string): Promise<Payment | null> {
+    return this.paymentsRepository.findOne({
+      where: { transaction_id: transactionId },
+    });
   }
 
   // Business logic: check if payment amount matches invoice balance
