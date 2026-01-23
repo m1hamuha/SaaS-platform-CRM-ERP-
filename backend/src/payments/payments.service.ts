@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment, PaymentStatus } from './payment.entity';
@@ -41,13 +41,15 @@ export class PaymentsService {
     return payment;
   }
 
-  async update(id: string, updatePaymentDto: UpdatePaymentDto): Promise<Payment> {
+  async update(
+    id: string,
+    updatePaymentDto: UpdatePaymentDto,
+  ): Promise<Payment> {
     await this.paymentsRepository.update(id, updatePaymentDto);
     return this.findOne(id);
   }
 
   async remove(id: string): Promise<void> {
-    const payment = await this.findOne(id);
     await this.paymentsRepository.softDelete(id);
   }
 
@@ -62,13 +64,15 @@ export class PaymentsService {
     const payment = await this.findOne(id);
     payment.status = PaymentStatus.FAILED;
     if (reason) {
-      payment.notes = (payment.notes ? payment.notes + '; ' : '') + `Failed: ${reason}`;
+      payment.notes =
+        (payment.notes ? payment.notes + '; ' : '') + `Failed: ${reason}`;
     }
     return this.paymentsRepository.save(payment);
   }
 
   // Business logic: check if payment amount matches invoice balance
-  async validatePaymentAmount(invoiceId: string, amount: number): Promise<boolean> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  validatePaymentAmount(_invoiceId: string, _amount: number): boolean {
     // This would need to calculate remaining balance on invoice
     // For now, return true - implement when invoice service is available
     return true;

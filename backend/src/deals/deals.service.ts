@@ -48,7 +48,6 @@ export class DealsService {
   }
 
   async remove(id: string): Promise<void> {
-    const deal = await this.findOne(id);
     await this.dealsRepository.softDelete(id);
   }
 
@@ -60,7 +59,10 @@ export class DealsService {
 
     if (currentIndex < stages.length - 1) {
       deal.stage = stages[currentIndex + 1] as DealStage;
-      if (deal.stage === DealStage.CLOSED_WON || deal.stage === DealStage.CLOSED_LOST) {
+      if (
+        deal.stage === DealStage.CLOSED_WON ||
+        deal.stage === DealStage.CLOSED_LOST
+      ) {
         deal.actual_close_date = new Date();
       }
     }

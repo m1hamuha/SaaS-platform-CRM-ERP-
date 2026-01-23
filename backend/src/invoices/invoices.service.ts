@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Invoice, InvoiceItem, InvoiceStatus } from './invoice.entity';
+import { Invoice, InvoiceStatus } from './invoice.entity';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 
@@ -13,7 +13,12 @@ export class InvoicesService {
   ) {}
 
   async create(createInvoiceDto: CreateInvoiceDto): Promise<Invoice> {
-    const { items, discount_amount = 0, tax_amount = 0, ...invoiceData } = createInvoiceDto;
+    const {
+      items,
+      discount_amount = 0,
+      tax_amount = 0,
+      ...invoiceData
+    } = createInvoiceDto;
 
     // Calculate subtotal from items
     const subtotal = items.reduce((sum, item) => sum + item.total, 0);
@@ -59,10 +64,14 @@ export class InvoicesService {
     return invoice;
   }
 
-  async update(id: string, updateInvoiceDto: UpdateInvoiceDto): Promise<Invoice> {
+  async update(
+    id: string,
+    updateInvoiceDto: UpdateInvoiceDto,
+  ): Promise<Invoice> {
     const invoice = await this.findOne(id);
 
-    const { items, discount_amount, tax_amount, ...updateData } = updateInvoiceDto;
+    const { items, discount_amount, tax_amount, ...updateData } =
+      updateInvoiceDto;
 
     // Recalculate totals if items or amounts changed
     let subtotal = invoice.subtotal;
@@ -91,7 +100,6 @@ export class InvoicesService {
   }
 
   async remove(id: string): Promise<void> {
-    const invoice = await this.findOne(id);
     await this.invoicesRepository.softDelete(id);
   }
 
