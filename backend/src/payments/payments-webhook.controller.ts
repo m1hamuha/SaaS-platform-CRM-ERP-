@@ -27,8 +27,9 @@ export class PaymentsWebhookController {
     );
 
     try {
+      const rawBody = (req as any).rawBody || req.body;
       const event = this.stripeService.constructEvent(
-        (req as any).rawBody || req.body,
+        rawBody,
         signature,
         endpointSecret,
       );
