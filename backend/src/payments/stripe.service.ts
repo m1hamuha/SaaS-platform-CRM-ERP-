@@ -10,7 +10,7 @@ export class StripeService {
     this.stripe = new Stripe(
       this.configService.get<string>('stripe.secretKey', ''),
       {
-        apiVersion: '2023-10-16',
+        apiVersion: '2022-11-15',
       },
     );
   }
@@ -78,6 +78,8 @@ export class StripeService {
   }
 
   async retrieveCustomer(customerId: string): Promise<Stripe.Customer> {
-    return this.stripe.customers.retrieve(customerId);
+    return this.stripe.customers.retrieve(
+      customerId,
+    ) as Promise<Stripe.Customer>;
   }
 }

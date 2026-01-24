@@ -1,8 +1,9 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { BullModule } from '@nestjs/bull';
 // import { BullModule } from '@nestjs/bull'; // Disabled for local testing
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
