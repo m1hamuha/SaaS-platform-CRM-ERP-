@@ -60,13 +60,30 @@ jobs:
         working-directory: ./backend
         run: npm ci
       
-      - name: Install health check dependencies
+       - name: Install health check dependencies
         working-directory: ./scripts/health-check
         run: |
           npm init -y
           npm install pg ioredis
+          npm install --save-dev @types/pg @types/ioredis
       
-      - name: Run infrastructure health checks
+       - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres -d crm_erp_test; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+          if ! pg_isready -h localhost -p 5432 -U postgres -d crm_erp_test; then
+            echo "PostgreSQL failed to start"
+            exit 1
+          fi
+
+       - name: Run infrastructure health checks
         working-directory: ./scripts/health-check
         run: node check-all.js
         env:
@@ -77,6 +94,7 @@ jobs:
           DB_PASSWORD: postgres
           REDIS_HOST: localhost
           REDIS_PORT: 6379
+          PGPASSWORD: postgres
       
       - name: Upload health check results
         if: always()
@@ -279,10 +297,11 @@ jobs:
     name: Notify on BVT Failure
     runs-on: ubuntu-latest
     needs: [infrastructure-health-check, backend-smoke-tests, frontend-smoke-tests]
-    if: failure()
+    if: failure() && contains(needs.*.result, 'failure')
     
     steps:
       - name: Send Slack notification
+        if: env.SLACK_BOT_TOKEN != ''
         uses: slackapi/slack-github-action@v1.27.0
         with:
           channel-id: 'C12345678' # Replace with actual channel ID
@@ -298,3 +317,28 @@ jobs:
             Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        continue-on-error: true
+
+      - name: Create failure summary
+        if: always()
+        run: |
+          echo "# BVT Failure Notification" > bvt-failure-summary.md
+          echo "## Failed Jobs" >> bvt-failure-summary.md
+          echo "- Infrastructure: ${{ needs.infrastructure-health-check.result }}" >> bvt-failure-summary.md
+          echo "- Backend: ${{ needs.backend-smoke-tests.result }}" >> bvt-failure-summary.md
+          echo "- Frontend: ${{ needs.frontend-smoke-tests.result }}" >> bvt-failure-summary.md
+          echo "" >> bvt-failure-summary.md
+          echo "## Workflow Details" >> bvt-failure-summary.md
+          echo "- Repository: ${{ github.repository }}" >> bvt-failure-summary.md
+          echo "- Workflow: ${{ github.workflow }}" >> bvt-failure-summary.md
+          echo "- Run: ${{ github.run_id }}" >> bvt-failure-summary.md
+          echo "- Commit: ${{ github.sha }}" >> bvt-failure-summary.md
+          echo "- Link: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> bvt-failure-summary.md
+
+      - name: Upload failure summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bvt-failure-summary
+          path: bvt-failure-summary.md
+          retention-days: 30

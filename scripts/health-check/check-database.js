@@ -12,8 +12,8 @@ const config = {
   port: process.env.DB_PORT || 5432,
   database: process.env.DB_NAME || 'crm_erp',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  connectionTimeoutMillis: 5000,
+  password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'postgres',
+  connectionTimeoutMillis: 10000,
 };
 
 async function checkDatabase() {
@@ -30,7 +30,15 @@ async function checkDatabase() {
     
     // 1. Connect to database
     const connectStart = Date.now();
-    await client.connect();
+    try {
+      await client.connect();
+    } catch (connectError) {
+      console.error('Database connection error:', connectError.message);
+      if (connectError.message.includes('timeout')) {
+        console.log('Connection timeout - database may not be ready yet');
+      }
+      throw connectError;
+    }
     const connectTime = Date.now() - connectStart;
     
     results.checks.push({
