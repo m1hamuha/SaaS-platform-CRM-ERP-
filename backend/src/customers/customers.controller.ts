@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
-  Query,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -31,26 +31,35 @@ export class CustomersController {
   @ApiOperation({ summary: 'Create a new customer' })
   @ApiResponse({ status: 201, description: 'Customer created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  create(@Body() createCustomerDto: CreateCustomerDto) {
-    return this.customersService.create(createCustomerDto);
+  create(@Body() createCustomerDto: CreateCustomerDto, @Req() req: any) {
+    const organizationId = req.user?.org_id;
+    if (!organizationId) {
+      throw new Error('Organization context missing from JWT');
+    }
+    return this.customersService.create(createCustomerDto, organizationId);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all customers' })
+  @ApiOperation({ summary: 'Get all customers for the current organization' })
   @ApiResponse({ status: 200, description: 'Customers retrieved successfully' })
-  findAll(@Query('organization_id') organizationId?: string) {
-    if (organizationId) {
-      return this.customersService.findByOrganization(organizationId);
+  findAll(@Req() req: any) {
+    const organizationId = req.user?.org_id;
+    if (!organizationId) {
+      throw new Error('Organization context missing from JWT');
     }
-    return this.customersService.findAll();
+    return this.customersService.findAll(organizationId);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get customer by ID' })
   @ApiResponse({ status: 200, description: 'Customer retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
-  findOne(@Param('id') id: string) {
-    return this.customersService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: any) {
+    const organizationId = req.user?.org_id;
+    if (!organizationId) {
+      throw new Error('Organization context missing from JWT');
+    }
+    return this.customersService.findOne(id, organizationId);
   }
 
   @Patch(':id')
@@ -60,15 +69,24 @@ export class CustomersController {
   update(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
+    @Req() req: any,
   ) {
-    return this.customersService.update(id, updateCustomerDto);
+    const organizationId = req.user?.org_id;
+    if (!organizationId) {
+      throw new Error('Organization context missing from JWT');
+    }
+    return this.customersService.update(id, updateCustomerDto, organizationId);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete customer by ID' })
   @ApiResponse({ status: 200, description: 'Customer deleted successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
-  remove(@Param('id') id: string) {
-    return this.customersService.remove(id);
+  remove(@Param('id') id: string, @Req() req: any) {
+    const organizationId = req.user?.org_id;
+    if (!organizationId) {
+      throw new Error('Organization context missing from JWT');
+    }
+    return this.customersService.remove(id, organizationId);
   }
 }

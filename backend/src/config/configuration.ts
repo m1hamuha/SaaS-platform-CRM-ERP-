@@ -25,9 +25,9 @@ export default () => ({
     password: process.env.RABBITMQ_PASSWORD || 'guest',
   },
   jwt: {
-    secret: process.env.JWT_SECRET || 'super-secret-key-change-in-production',
-    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '900', 10), // seconds
-    refreshSecret: process.env.JWT_REFRESH_SECRET || 'super-secret-refresh-key',
+    secret: process.env.JWT_SECRET,
+    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '900', 10),
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
   stripe: {
@@ -37,5 +37,7 @@ export default () => ({
   app: {
     port: parseInt(process.env.PORT || '3001', 10) || 3001,
     nodeEnv: process.env.NODE_ENV || 'development',
+    enableTenantHeaderBypass:
+      process.env.ENABLE_TENANT_HEADER_BYPASS === 'true',
   },
 });

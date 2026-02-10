@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger, UnauthorizedException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
@@ -9,7 +9,58 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import helmet from 'helmet';
 import * as express from 'express';
 
+function validateRequiredSecrets() {
+  const requiredSecrets = [
+    { name: 'JWT_SECRET', value: process.env.JWT_SECRET },
+    { name: 'JWT_REFRESH_SECRET', value: process.env.JWT_REFRESH_SECRET },
+  ];
+
+  const missingSecrets = requiredSecrets
+    .filter((secret) => !secret.value)
+    .map((secret) => secret.name);
+
+  if (missingSecrets.length > 0) {
+    throw new UnauthorizedException(
+      `Missing required environment variables: ${missingSecrets.join(', ')}. ` +
+        'Please configure these before starting the application.',
+    );
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    const defaultCredentials = [
+      {
+        name: 'DB_PASSWORD',
+        value: process.env.DB_PASSWORD,
+        default: 'postgres',
+      },
+      {
+        name: 'RABBITMQ_PASSWORD',
+        value: process.env.RABBITMQ_PASSWORD,
+        default: 'guest',
+      },
+      {
+        name: 'REDIS_PASSWORD',
+        value: process.env.REDIS_PASSWORD,
+        default: '',
+      },
+    ];
+
+    const weakCredentials = defaultCredentials.filter(
+      (cred) => cred.value === cred.default,
+    );
+
+    if (weakCredentials.length > 0) {
+      throw new UnauthorizedException(
+        `Default credentials detected for: ${weakCredentials.map((c) => c.name).join(', ')}. ` +
+          'Please configure secure credentials for production.',
+      );
+    }
+  }
+}
+
 async function bootstrap() {
+  validateRequiredSecrets();
+
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
 

@@ -2,20 +2,26 @@ import {
   Injectable,
   NestMiddleware,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { DataSource } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class TenantMiddleware implements NestMiddleware {
-  constructor(private dataSource: DataSource) {}
+  private readonly logger = new Logger(TenantMiddleware.name);
+
+  constructor(
+    private dataSource: DataSource,
+    private configService: ConfigService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
     try {
       let organizationId: string | null = null;
 
-      // Try to extract from Authorization header (JWT token)
       const authHeader = req.headers.authorization;
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.substring(7);
@@ -25,42 +31,48 @@ export class TenantMiddleware implements NestMiddleware {
             organizationId = decoded.org_id;
           }
         } catch {
-          // Invalid token, continue with header check
+          this.logger.warn(
+            'Failed to decode JWT token for organization extraction',
+          );
         }
       }
 
-      // Fallback to X-Organization-ID header (for development/testing)
-      if (!organizationId) {
+      const enableHeaderBypass = this.configService.get<boolean>(
+        'app.enableTenantHeaderBypass',
+      );
+
+      if (!organizationId && enableHeaderBypass) {
         const orgHeader =
           req.headers['x-organization-id'] || req.headers['x-tenant-id'];
         if (orgHeader) {
-          organizationId = Array.isArray(orgHeader) ? orgHeader[0] : orgHeader;
+          const orgHeaderStr = Array.isArray(orgHeader)
+            ? orgHeader[0]
+            : orgHeader;
+          organizationId = orgHeaderStr;
+          this.logger.warn(
+            `Tenant header bypass used: ${orgHeaderStr}. This should be disabled in production.`,
+          );
         }
       }
 
-      // If no organization ID found, throw unauthorized
       if (!organizationId) {
         throw new UnauthorizedException('Organization context required');
       }
 
-      // Validate organization ID format (should be UUID)
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(organizationId)) {
         throw new UnauthorizedException('Invalid organization ID format');
       }
 
-      // Set the organization ID in PostgreSQL session for RLS
-      await this.dataSource.query(
-        `SET app.current_organization_id = '${organizationId}'`,
-      );
+      await this.dataSource.query(`SET app.current_organization_id = $1`, [
+        organizationId,
+      ]);
 
-      // Attach to request for later use
       (req as { organizationId?: string }).organizationId = organizationId;
 
       next();
     } catch (error) {
-      // If tenant middleware fails, return 401
       if (error instanceof UnauthorizedException) {
         throw error;
       }
