@@ -1,4 +1,11 @@
-import { Controller, Post, Headers, Body, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Headers,
+  Body,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import type { RawBodyRequest } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
@@ -52,7 +59,7 @@ export class PaymentsWebhookController {
       return { received: true };
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
-      throw new Error('Webhook signature verification failed');
+      throw new BadRequestException('Webhook signature verification failed');
     }
   }
 

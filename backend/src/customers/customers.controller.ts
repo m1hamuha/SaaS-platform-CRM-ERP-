@@ -8,7 +8,9 @@ import {
   Delete,
   UseGuards,
   Req,
+  UnauthorizedException,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -31,10 +33,10 @@ export class CustomersController {
   @ApiOperation({ summary: 'Create a new customer' })
   @ApiResponse({ status: 201, description: 'Customer created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  create(@Body() createCustomerDto: CreateCustomerDto, @Req() req: any) {
-    const organizationId = req.user?.org_id;
+  create(@Body() createCustomerDto: CreateCustomerDto, @Req() req: Request) {
+    const organizationId = (req as any).user?.org_id;
     if (!organizationId) {
-      throw new Error('Organization context missing from JWT');
+      throw new UnauthorizedException('Organization context missing from JWT');
     }
     return this.customersService.create(createCustomerDto, organizationId);
   }
@@ -42,10 +44,10 @@ export class CustomersController {
   @Get()
   @ApiOperation({ summary: 'Get all customers for the current organization' })
   @ApiResponse({ status: 200, description: 'Customers retrieved successfully' })
-  findAll(@Req() req: any) {
-    const organizationId = req.user?.org_id;
+  findAll(@Req() req: Request) {
+    const organizationId = (req as any).user?.org_id;
     if (!organizationId) {
-      throw new Error('Organization context missing from JWT');
+      throw new UnauthorizedException('Organization context missing from JWT');
     }
     return this.customersService.findAll(organizationId);
   }
@@ -54,10 +56,10 @@ export class CustomersController {
   @ApiOperation({ summary: 'Get customer by ID' })
   @ApiResponse({ status: 200, description: 'Customer retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
-  findOne(@Param('id') id: string, @Req() req: any) {
-    const organizationId = req.user?.org_id;
+  findOne(@Param('id') id: string, @Req() req: Request) {
+    const organizationId = (req as any).user?.org_id;
     if (!organizationId) {
-      throw new Error('Organization context missing from JWT');
+      throw new UnauthorizedException('Organization context missing from JWT');
     }
     return this.customersService.findOne(id, organizationId);
   }
@@ -69,11 +71,11 @@ export class CustomersController {
   update(
     @Param('id') id: string,
     @Body() updateCustomerDto: UpdateCustomerDto,
-    @Req() req: any,
+    @Req() req: Request,
   ) {
-    const organizationId = req.user?.org_id;
+    const organizationId = (req as any).user?.org_id;
     if (!organizationId) {
-      throw new Error('Organization context missing from JWT');
+      throw new UnauthorizedException('Organization context missing from JWT');
     }
     return this.customersService.update(id, updateCustomerDto, organizationId);
   }
@@ -82,10 +84,10 @@ export class CustomersController {
   @ApiOperation({ summary: 'Delete customer by ID' })
   @ApiResponse({ status: 200, description: 'Customer deleted successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
-  remove(@Param('id') id: string, @Req() req: any) {
-    const organizationId = req.user?.org_id;
+  remove(@Param('id') id: string, @Req() req: Request) {
+    const organizationId = (req as any).user?.org_id;
     if (!organizationId) {
-      throw new Error('Organization context missing from JWT');
+      throw new UnauthorizedException('Organization context missing from JWT');
     }
     return this.customersService.remove(id, organizationId);
   }
