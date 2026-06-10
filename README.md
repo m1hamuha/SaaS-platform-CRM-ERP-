@@ -5,19 +5,25 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 
-A modern, multi-tenant CRM and ERP platform with role-based access, integrated payments, automated reporting, and comprehensive CI/CD. Built with NestJS (backend), Next.js (frontend), PostgreSQL, Redis, and Docker.
+A modern, multi-tenant CRM and ERP platform with role-based access, integrated payments, and a CI/CD pipeline. Built with NestJS (backend), Next.js (frontend), PostgreSQL, Redis, and Docker.
 
 ## ✨ Features
 
 - **Multi-tenancy**: Database-level isolation using PostgreSQL Row-Level Security (RLS)
 - **Role-Based Access Control (RBAC)**: Hierarchical permissions with fine-grained access control
-- **Authentication**: OAuth 2.0 with JWT tokens and refresh token rotation
+- **Authentication**: JWT-based auth with refresh token rotation
 - **Payment Processing**: Stripe Connect integration for handling payments
-- **Async Operations**: Background job processing with RabbitMQ
-- **Reporting**: Automated report generation with PDF/Excel/CSV exports
+- **Async Operations**: Background job processing with Bull queues (Redis)
 - **Monitoring**: Comprehensive observability with logging and metrics
 - **CI/CD**: GitHub Actions workflows for automated testing and deployment
 - **Containerized**: Docker Compose for local development and production deployment
+
+### 🗺️ Roadmap (not yet implemented)
+
+- OAuth 2.0 / social login providers
+- Automated reporting with PDF/Excel/CSV exports
+- RabbitMQ-based event processing (currently Bull/Redis)
+- Multi-factor authentication (MFA)
 
 ## 🏗️ Architecture
 
@@ -38,7 +44,7 @@ graph TB
     subgraph "Infrastructure"
         DB[(PostgreSQL)]
         Cache[(Redis)]
-        MQ[(RabbitMQ)]
+        MQ[(Bull Queues / Redis)]
         Stripe[Stripe API]
     end
     
@@ -74,9 +80,7 @@ graph TB
 │   ├── test/                  # Frontend tests
 │   └── package.json
 ├── docker/                    # Docker configurations
-│   ├── postgres/              # PostgreSQL setup with RLS
-│   ├── redis/                 # Redis configuration
-│   └── rabbitmq/              # RabbitMQ configuration
+│   └── postgres/              # PostgreSQL setup with RLS
 ├── scripts/                   # Utility scripts
 │   ├── health-check/          # Infrastructure health checks
 │   ├── run-bvt.sh             # Build Verification Test runner
@@ -90,10 +94,7 @@ graph TB
 │   └── bvt.yml                # Build Verification Tests
 ├── docker-compose.yml         # Local development environment
 ├── LICENSE                    # MIT License
-├── README.md                  # This file
-├── tech.md                    # Technical specification
-├── pep.md                     # Project execution plan
-└── wbs.md                     # Work breakdown structure
+└── README.md                  # This file
 ```
 
 ## 🚀 Getting Started
@@ -116,7 +117,7 @@ graph TB
    ```bash
    docker-compose up -d
    ```
-   This starts PostgreSQL, Redis, and RabbitMQ.
+   This starts PostgreSQL, Redis, and RabbitMQ (RabbitMQ is provisioned for future use; the backend currently uses Bull/Redis for queues).
 
 3. **Set up the backend**
    ```bash
@@ -155,11 +156,17 @@ Create `.env` files in both `backend/` and `frontend/` directories. Use the prov
 ```env
 NODE_ENV=development
 PORT=3001
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/saas_platform
-REDIS_URL=redis://localhost:6379
-RABBITMQ_URL=amqp://localhost:5672
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=crm_erp
+REDIS_HOST=localhost
+REDIS_PORT=6379
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
-JWT_EXPIRATION=1d
+JWT_EXPIRES_IN=900
+JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-in-production
+JWT_REFRESH_EXPIRES_IN=7d
 STRIPE_SECRET_KEY=sk_test_your_stripe_key
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 ```
@@ -204,7 +211,6 @@ Run the BVT suite locally:
 - **TypeScript**: Strict type checking across both backend and frontend
 - **ESLint**: Code linting with custom rules
 - **Prettier**: Consistent code formatting
-- **Husky**: Git hooks for pre-commit checks
 
 ### Available Scripts
 
@@ -252,7 +258,7 @@ GitHub Actions workflows automate the development pipeline:
 Build and run with Docker Compose:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up -d --build
 ```
 
 ### Customizing Deployment
@@ -277,9 +283,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📚 Documentation
 
-- [Technical Specification](tech.md) - Detailed technical architecture and design decisions
-- [Project Execution Plan](pep.md) - Project planning and execution details
-- [Work Breakdown Structure](wbs.md) - Task breakdown and scheduling
+- [Technical Specification](docs/planning/tech.md) - Detailed technical architecture and design decisions
+- [Project Execution Plan](docs/planning/pep.md) - Project planning and execution details
+- [Work Breakdown Structure](docs/planning/wbs.md) - Task breakdown and scheduling
 - [BVT Quick Start](docs/bvt-quickstart.md) - Build Verification Test guide
 - [BVT Runbook](docs/bvt-runbook.md) - Operational runbook for BVT
 
