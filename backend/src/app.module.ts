@@ -4,10 +4,9 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { BullModule } from '@nestjs/bull';
-// import { BullModule } from '@nestjs/bull'; // Disabled for local testing
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-// import { DatabaseModule } from './database/database.module'; // Disabled for testing
+import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { AuthModule } from './auth/auth.module';
 import { OrganizationsModule } from './organizations/organizations.module';
@@ -32,22 +31,12 @@ import { throttlerConfig } from './config/throttler.config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         store: redisStore as any,
-        host: configService.get<string>('REDIS_HOST', 'localhost'),
-        port: configService.get<number>('REDIS_PORT', 6379),
+        host: configService.get<string>('redis.host', 'localhost'),
+        port: configService.get<number>('redis.port', 6379),
         ttl: 3600, // 1 hour default TTL
       }),
     }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        store: redisStore as any,
-        host: configService.get<string>('REDIS_HOST', 'localhost'),
-        port: configService.get<number>('REDIS_PORT', 6379),
-        ttl: 3600, // 1 hour default TTL
-      }),
-    }),
-    // DatabaseModule, // Disabled for local testing
+    DatabaseModule,
     HealthModule,
     AuthModule,
     OrganizationsModule,
