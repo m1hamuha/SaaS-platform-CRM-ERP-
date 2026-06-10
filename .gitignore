@@ -149,3 +149,5 @@ Thumbs.db
 docker/postgres/data/
 docker/redis/data/
 SaaS-platform-CRM-ERP-/
+# Test artifacts
+test-results/
