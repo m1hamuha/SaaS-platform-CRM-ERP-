@@ -99,9 +99,12 @@ export class TenantMiddleware implements NestMiddleware {
         throw new UnauthorizedException('Invalid organization ID format');
       }
 
-      await this.dataSource.query(`SET app.current_organization_id = $1`, [
-        organizationId,
-      ]);
+      // NOTE: Postgres `SET` does not support bind parameters, so we use
+      // set_config() which does (third arg `false` = session scope, like SET).
+      await this.dataSource.query(
+        `SELECT set_config('app.current_organization_id', $1, false)`,
+        [organizationId],
+      );
 
       (req as { organizationId?: string }).organizationId = organizationId;
 

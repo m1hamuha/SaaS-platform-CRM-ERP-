@@ -123,8 +123,11 @@ graph TB
    ```bash
    cd backend
    npm install
+   npm run seed       # create demo organization + admin user + sample data
    npm run start:dev
    ```
+   The seeder prints demo login credentials (default: `admin@demo.local` / `Demo1234!`,
+   override with `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`).
    The API will be available at `http://localhost:3001`.
 
 4. **Set up the frontend**

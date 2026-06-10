@@ -1,6 +1,7 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
 import { BullModule } from '@nestjs/bull';
@@ -31,8 +32,10 @@ import { throttlerConfig } from './config/throttler.config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         store: redisStore as any,
-        host: configService.get<string>('redis.host', 'localhost'),
-        port: configService.get<number>('redis.port', 6379),
+        socket: {
+          host: configService.get<string>('redis.host', 'localhost'),
+          port: configService.get<number>('redis.port', 6379),
+        },
         ttl: 3600, // 1 hour default TTL
       }),
     }),
@@ -58,7 +61,13 @@ import { throttlerConfig } from './config/throttler.config';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

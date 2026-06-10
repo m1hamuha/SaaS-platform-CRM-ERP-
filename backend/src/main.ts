@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger, UnauthorizedException } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -107,9 +106,6 @@ async function bootstrap() {
       },
     }),
   );
-
-  // Global rate limiting
-  app.useGlobalGuards(app.get(ThrottlerGuard));
 
   // Global exception filter
   app.useGlobalFilters(new AllExceptionsFilter());
