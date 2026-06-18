@@ -74,10 +74,71 @@ jobs:
       - name: Build
         run: npm run build
 
-      # NOTE: integration (test:e2e), smoke and acceptance suites require a
-      # live Postgres + Redis and a working migration/seed path. They are
-      # re-enabled here in the persistence phase (see docs/HARDENING_ROADMAP.md
-      # Phase 1) once the suite no longer asserts unimplemented behaviour.
+  # Proves the app actually boots and serves traffic against a real
+  # Postgres + Redis (previously unverifiable — the e2e tier could not even
+  # bootstrap). This is the harness the persistence phase builds on.
+  integration:
+    name: Integration (app boots against Postgres + Redis)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: crm_erp_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s
+          --health-timeout 5s --health-retries 5
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Boot app and verify it serves /health/liveness
+        run: |
+          node dist/main.js &
+          APP_PID=$!
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3001/api/v1/health/liveness >/dev/null; then
+              echo "App is live after ${i} attempt(s)"; ok=1; break
+            fi
+            sleep 2
+          done
+          kill "$APP_PID" 2>/dev/null || true
+          if [ "$ok" -ne 1 ]; then echo "App failed to become healthy"; exit 1; fi
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_DATABASE: crm_erp_test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          JWT_SECRET: ci-integration-secret
+          JWT_REFRESH_SECRET: ci-integration-refresh-secret
+          NODE_ENV: test
+          PORT: 3001
 
   frontend:
     name: Frontend (lint · test · build)
