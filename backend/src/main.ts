@@ -157,6 +157,10 @@ async function bootstrap() {
     );
   }
 
+  // Drain DB/Redis connections and Bull workers cleanly on SIGTERM/SIGINT
+  // (e.g. container/orchestrator rollouts) instead of dropping them.
+  app.enableShutdownHooks();
+
   await app.listen(port);
 
   logger.log(`Application is running on: http://localhost:${port}/api/v1`);

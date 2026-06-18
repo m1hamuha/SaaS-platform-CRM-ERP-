@@ -18,6 +18,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { DealsModule } from './deals/deals.module';
 import { TenantMiddleware } from './middleware/tenant.middleware';
 import configuration from './config/configuration';
+import { validateEnv } from './config/env.validation';
 import { throttlerConfig } from './config/throttler.config';
 
 @Module({
@@ -25,6 +26,7 @@ import { throttlerConfig } from './config/throttler.config';
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,
+      validate: validateEnv,
     }),
     ThrottlerModule.forRoot(throttlerConfig),
     CacheModule.registerAsync({
