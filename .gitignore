@@ -89,7 +89,8 @@ dist
 
 # Gatsby files
 .cache/
-public
+# NOTE: deliberately NOT ignoring `public` — this is a Next.js app and
+# `frontend/public/` must be tracked. (Bare `public` was a Gatsby leftover.)
 
 # Vuepress build output
 .vuepress/dist
@@ -122,8 +123,7 @@ public
 *.swp
 *.swo
 
-# Docker
-*.dockerignore
+# Docker (local override only — .dockerignore files ARE tracked)
 docker-compose.override.yml
 
 # Database
@@ -149,5 +149,9 @@ Thumbs.db
 docker/postgres/data/
 docker/redis/data/
 SaaS-platform-CRM-ERP-/
+# Accidental nested clones / divergent self-copies (preserved as git tag
+# `archive/1st-divergent`). The on-disk 1st/ is intentionally untracked.
+1st/
 # Test artifacts
 test-results/
+.gstack/

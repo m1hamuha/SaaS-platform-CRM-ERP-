@@ -1,46 +1,47 @@
-# Build stage
-FROM node:22-alpine AS builder
+# syntax=docker/dockerfile:1
 
+# ---- Build stage -----------------------------------------------------------
+# Full dependency install: nest/tsc live in devDependencies and are required
+# to compile, so this MUST be a complete `npm ci` (not --omit=dev).
+FROM node:22-alpine AS builder
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
-# Copy source code
 COPY src ./src
-
-# Build the application
 RUN npm run build
 
-# Production stage
-FROM node:22-alpine AS production
-
+# ---- Production dependencies stage ----------------------------------------
+# Install ONLY runtime dependencies so the final image stays slim.
+FROM node:22-alpine AS prod-deps
 WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001 && \
-    chown -R nestjs:nodejs /app
+# ---- Production stage ------------------------------------------------------
+FROM node:22-alpine AS production
+WORKDIR /app
+ENV NODE_ENV=production
 
-# Copy package files and built application
-COPY --from=builder --chown=nestjs:nodejs /app/package*.json ./
-COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+# Run as a non-root user.
+RUN addgroup -g 1001 -S nodejs \
+  && adduser -S nestjs -u 1001 \
+  && chown -R nestjs:nodejs /app
 
-# Switch to non-root user
+COPY --from=prod-deps --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder  --chown=nestjs:nodejs /app/package*.json ./
+COPY --from=builder  --chown=nestjs:nodejs /app/dist ./dist
+
 USER nestjs
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:${PORT:-3001}/api/v1/health', (r) => {if(r.statusCode !== 200) throw new Error()})"
+# Liveness probe (no DB dependency, unlike GET /health which pings the DB).
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:'+(process.env.PORT||3001)+'/api/v1/health/liveness',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"
 
-# Expose port
 EXPOSE 3001
 
-# Start the application
 CMD ["node", "dist/main.js"]
