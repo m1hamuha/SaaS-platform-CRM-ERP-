@@ -15,6 +15,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Unified CRM/ERP Platform",
   description: "Multi-tenant CRM and ERP platform with comprehensive business management tools",
+  applicationName: "Unified CRM/ERP Platform",
+  openGraph: {
+    type: "website",
+    siteName: "Unified CRM/ERP Platform",
+    title: "Unified CRM/ERP Platform",
+    description: "Multi-tenant CRM and ERP platform with comprehensive business management tools",
+  },
+  twitter: {
+    card: "summary",
+    title: "Unified CRM/ERP Platform",
+    description: "Multi-tenant CRM and ERP platform with comprehensive business management tools",
+  },
 };
 
 export default function RootLayout({
