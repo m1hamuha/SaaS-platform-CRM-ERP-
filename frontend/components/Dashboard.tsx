@@ -9,9 +9,9 @@ export default function Dashboard() {
         {/* Sidebar */}
         <aside className="w-64 bg-white dark:bg-gray-800 shadow-sm">
           <div className="p-6">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+            <div className="text-xl font-bold text-gray-900 dark:text-white">
               CRM/ERP Platform
-            </h1>
+            </div>
           </div>
           <nav className="px-4 pb-4">
             <ul className="space-y-2">
