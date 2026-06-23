@@ -150,19 +150,19 @@ export default function Dashboard() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Database</span>
-                    <span className="text-sm text-green-600">Healthy</span>
+                    <span className="text-sm text-green-700 dark:text-green-400">Healthy</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">API</span>
-                    <span className="text-sm text-green-600">Healthy</span>
+                    <span className="text-sm text-green-700 dark:text-green-400">Healthy</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Redis Cache</span>
-                    <span className="text-sm text-green-600">Healthy</span>
+                    <span className="text-sm text-green-700 dark:text-green-400">Healthy</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Message Queue</span>
-                    <span className="text-sm text-yellow-600">Warning</span>
+                    <span className="text-sm text-yellow-700 dark:text-yellow-400">Warning</span>
                   </div>
                 </div>
               </CardContent>
