@@ -13,10 +13,10 @@ export default function Dashboard() {
               CRM/ERP Platform
             </div>
           </div>
-          <nav className="px-4 pb-4">
+          <nav className="px-4 pb-4" aria-label="Main navigation">
             <ul className="space-y-2">
               <li>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start" aria-current="page">
                   <TrendingUp className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
