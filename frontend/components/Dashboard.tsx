@@ -5,6 +5,12 @@ import { Users, Building, TrendingUp, DollarSign } from 'lucide-react';
 export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      >
+        Skip to main content
+      </a>
       <div className="flex">
         {/* Sidebar */}
         <aside className="w-64 bg-white dark:bg-gray-800 shadow-sm">
@@ -44,7 +50,7 @@ export default function Dashboard() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-8">
+        <main id="main-content" className="flex-1 p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Dashboard
