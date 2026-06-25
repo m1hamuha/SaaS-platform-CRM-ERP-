@@ -23,25 +23,25 @@ export default function Dashboard() {
             <ul className="space-y-2">
               <li>
                 <Button variant="ghost" className="w-full justify-start" aria-current="page">
-                  <TrendingUp className="mr-2 h-4 w-4" />
+                  <TrendingUp className="mr-2 h-4 w-4" aria-hidden="true" />
                   Dashboard
                 </Button>
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
-                  <Users className="mr-2 h-4 w-4" />
+                  <Users className="mr-2 h-4 w-4" aria-hidden="true" />
                   Customers
                 </Button>
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
-                  <Building className="mr-2 h-4 w-4" />
+                  <Building className="mr-2 h-4 w-4" aria-hidden="true" />
                   Organizations
                 </Button>
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
-                  <DollarSign className="mr-2 h-4 w-4" />
+                  <DollarSign className="mr-2 h-4 w-4" aria-hidden="true" />
                   Reports
                 </Button>
               </li>
@@ -65,7 +65,7 @@ export default function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Users className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">1,234</div>
@@ -76,7 +76,7 @@ export default function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Active Organizations</CardTitle>
-                <Building className="h-4 w-4 text-muted-foreground" />
+                <Building className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">42</div>
@@ -87,7 +87,7 @@ export default function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Revenue</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <DollarSign className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">$45,231</div>
@@ -98,7 +98,7 @@ export default function Dashboard() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Growth Rate</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <TrendingUp className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">+12.5%</div>
