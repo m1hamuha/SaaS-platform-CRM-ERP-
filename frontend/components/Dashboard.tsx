@@ -117,7 +117,7 @@ export default function Dashboard() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-medium" aria-hidden="true">
                       JD
                     </div>
                     <div className="ml-3">
@@ -126,7 +126,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-8 h-8 bg-green-700 rounded-full flex items-center justify-center text-white text-sm font-medium" aria-hidden="true">
                       JS
                     </div>
                     <div className="ml-3">
@@ -135,7 +135,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                    <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center text-white text-sm font-medium" aria-hidden="true">
                       MB
                     </div>
                     <div className="ml-3">
