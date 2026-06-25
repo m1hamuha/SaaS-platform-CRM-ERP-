@@ -10,6 +10,11 @@
      undefined --color-muted-foreground and secondary text falls back to full-strength
      --foreground, collapsing the intended visual hierarchy. 4.76:1 on white = WCAG AA. */
   --muted-foreground: #64748b;
+  /* Primary action color (the default Button variant: bg-primary text-primary-foreground).
+     Without it, every primary CTA renders with no fill and no text color, so it reads as
+     plain text instead of a clickable button. White on #2563eb = 5.17:1 = WCAG AA. */
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
 }
 
 @theme inline {
@@ -17,6 +22,8 @@
   --color-foreground: var(--foreground);
   --color-ring: var(--ring);
   --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -27,6 +34,8 @@
     --foreground: #ededed;
     --ring: #60a5fa;
     --muted-foreground: #94a3b8;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
   }
 }
 
