@@ -15,6 +15,12 @@
      plain text instead of a clickable button. White on #2563eb = 5.17:1 = WCAG AA. */
   --primary: #2563eb;
   --primary-foreground: #ffffff;
+  /* Accent (the ghost/outline Button hover state: hover:bg-accent hover:text-accent-foreground).
+     The sidebar's 4 nav buttons are all variant="ghost", whose only styling IS this hover pair,
+     so without these tokens hovering the main navigation produced NO visual feedback at all.
+     accent-foreground on accent = 16.3:1 = WCAG AA. */
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
 }
 
 @theme inline {
@@ -24,6 +30,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -36,6 +44,10 @@
     --muted-foreground: #94a3b8;
     --primary: #2563eb;
     --primary-foreground: #ffffff;
+    /* Dark accent uses slate-700 (distinct from the gray-800 sidebar) so the hover
+       remains visible in dark mode; #f8fafc on #334155 = 9.9:1 = WCAG AA. */
+    --accent: #334155;
+    --accent-foreground: #f8fafc;
   }
 }
 
