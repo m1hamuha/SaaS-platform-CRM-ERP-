@@ -32,7 +32,11 @@ const CardTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h3
+  // h2: card titles are the top-level sections under the page's single <h1>, so
+  // they must be <h2> to keep the heading outline gap-free (was <h3>, which skipped
+  // a level — WCAG 1.3.1 / 2.4.6). Size comes from the text-* class, not the tag,
+  // so this is a semantics-only change with no visual effect.
+  <h2
     ref={ref}
     className={cn(
       "text-2xl font-semibold leading-none tracking-tight",
