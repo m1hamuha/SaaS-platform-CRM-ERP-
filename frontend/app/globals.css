@@ -21,6 +21,12 @@
      accent-foreground on accent = 16.3:1 = WCAG AA. */
   --accent: #f1f5f9;
   --accent-foreground: #0f172a;
+  /* Card surface (the Card component: bg-card text-card-foreground). Without it, every
+     Card renders with a transparent fill, so its shadow-sm elevation has no opaque
+     surface to sit on and the 8 dashboard cards wash into the gray page instead of
+     reading as discrete panels. White card with #171717 text = 17.9:1 = WCAG AA. */
+  --card: #ffffff;
+  --card-foreground: #171717;
 }
 
 @theme inline {
@@ -32,6 +38,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -48,6 +56,10 @@
        remains visible in dark mode; #f8fafc on #334155 = 9.9:1 = WCAG AA. */
     --accent: #334155;
     --accent-foreground: #f8fafc;
+    /* Dark card uses gray-800 (matches the sidebar, lighter than the gray-900 page) so
+       the card surface stays distinct from the page background; #ededed on #1f2937 = 12.5:1. */
+    --card: #1f2937;
+    --card-foreground: #ededed;
   }
 }
 
