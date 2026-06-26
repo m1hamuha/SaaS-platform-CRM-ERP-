@@ -11,9 +11,9 @@ export default function Dashboard() {
       >
         Skip to main content
       </a>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* Sidebar */}
-        <aside className="w-64 bg-white dark:bg-gray-800 shadow-sm">
+        <aside className="w-full md:w-64 bg-white dark:bg-gray-800 shadow-sm">
           <div className="p-6">
             <div className="text-xl font-bold text-gray-900 dark:text-white">
               CRM/ERP Platform
