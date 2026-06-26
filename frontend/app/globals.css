@@ -27,6 +27,11 @@
      reading as discrete panels. White card with #171717 text = 17.9:1 = WCAG AA. */
   --card: #ffffff;
   --card-foreground: #171717;
+  /* Border color (the Card component uses a bare `border` class). In Tailwind v4 the
+     default border color is currentColor, so without this token every card drew a harsh
+     near-black 1px box (= card-foreground #171717) instead of a subtle panel edge. The
+     Card className now uses `border-border`, which resolves to this. gray-200. */
+  --border: #e5e7eb;
 }
 
 @theme inline {
@@ -40,6 +45,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -60,6 +66,9 @@
        the card surface stays distinct from the page background; #ededed on #1f2937 = 12.5:1. */
     --card: #1f2937;
     --card-foreground: #ededed;
+    /* Dark border uses gray-700 so the card edge stays visible against the gray-800
+       card and gray-900 page without harshness. */
+    --border: #374151;
   }
 }
 
