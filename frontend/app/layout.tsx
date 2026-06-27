@@ -38,6 +38,12 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: light)", color: "#f9fafb" },
     { media: "(prefers-color-scheme: dark)", color: "#111827" },
   ],
+  // The dashboard adapts to both schemes (globals.css drives its tokens off
+  // `@media (prefers-color-scheme: dark)`), so declare both. Without this the UA
+  // renders its canvas/overscroll area, scrollbars and any form controls in the
+  // light default even on a dark-mode device, flashing a white edge against the
+  // dark `bg-gray-900` page; `light dark` keeps those UA surfaces in step.
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({
